@@ -6,6 +6,7 @@ import modules.globals
 from modules import core
 from threading import Thread
 import time
+import os
 
 app = Flask(__name__)
 api = Api(app)
@@ -54,6 +55,9 @@ def get_status():
 @app.route('/api/download', methods=['GET'])
 def download_file():
     filePath = request.args.get('filePath', None)
+    if not os.path.exists(filePath):
+        return {"code": 405, "msg": "file does not exist", "data": []}
+
     return send_file(filePath, as_attachment=True)
 
 
