@@ -1,0 +1,123 @@
+docker run -it -v ~/develop/temp:/temp lmc/ncnn-tools:1.2
+
+yum install cmake
+yum install -y  clang	
+
+##源码编译
+unzip opencv-4.5.4.zip
+cd opencv-4.5.4
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+make -j8
+sudo make install
+sudo ldconfig
+
+make -j8 
+
+unzip protobuf-all-3.19.1.zip
+cd protobuf-all-3.19.1
+./configure --prefix=/usr/local
+make -j4
+sudo make install
+sudo ldconfig
+
+
+yum install autoconf automake libtool unzip -y
+
+
+# 第⼀步执⾏autogen.sh，但如果下载的是具体的某⼀⻔语⾔，不需要执⾏这⼀步。
+./autogen.sh
+# 第⼆步执⾏configure，有两种执⾏⽅式，任选其⼀即可，我使用第二种如下：
+# 1、protobuf默认安装在 /usr/local ⽬录，lib、bin都是分散的
+./configure
+# 2、修改安装⽬录，统⼀安装在/usr/local/protobuf下
+./configure --prefix=/usr/local/protobuf
+
+
+
+sudo vim /etc/profile
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/protobuf/lib/
+export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/protobuf/lib/
+export PATH=$PATH:/usr/local/protobuf/bin/
+export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/protobuf/include/
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/protobuf/include/
+export PKG_CONFIG_PATH=/usr/local/protobuf/lib/pkgconfig/
+
+
+- Could NOT find protobuf (missing: protobuf_DIR)
+-- Could NOT find Protobuf (missing: Protobuf_LIBRARIES Protobuf_INCLUDE_DIR)
+
+
+git clone https://github.com/Tencent/ncnn.git
+cd ncnn
+mkdir build 
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -Dprotobuf_DIR=/usr/local/protobuf -DProtobuf_LIBRARIES=/usr/local/protobuf/lib -DProtobuf_INCLUDE_DIR=/usr/local/protobuf/include ..  
+make
+make install
+
+
+
+git clone https://github.com/Tencent/ncnn.git
+cd ncnn
+mkdir build 
+cd build
+cmake ..
+make
+make install
+
+
+ONNX转换NCNN
+ncnn编译完后，在build/tools/onnx里会生成个可执行文件onnx2ncnn
+./onnx2ncnn mobilenetv2.onnx mobilenetv2.param mobilenetv2.bin
+
+
+
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..  && make && make install && ldconfig
+
+
+
+ONNX转换NCNN
+
+ncnn编译完后，在build/tools/onnx里会生成个可执行文件onnx2ncnn
+
+./onnx2ncnn mobilenetv2.onnx mobilenetv2.param mobilenetv2.bin
+
+
+onnx2ncnn inswapper_128_fp16.onnx inswapper_128_fp16.param inswapper_128_fp16.bin   
+
+pip install pnnx
+pnnx inswapper_128_fp16.onnx inputshape=[1, 3, 128, 128]
+
+inswapper_128_fp16.param
+
+onnx转ncnn野路子：
+
+https://www.cvmart.net/community/detail/6041
+https://zhuanlan.zhihu.com/p/431418709
+
+docker run -it -v ~/develop/temp:/temp tnn-convert
+python ./converter.py onnx2tnn /temp/inswapper_128_fp16.onnx -o /temp/tnn_models -optimize -v v1.0 -align
+
+onnx simplifier 优化模型
+pip install onnx-simplifier 
+python -m onnxsim det_10g.onnx det_10g_sim.onnx
+
+onnx optimizer 优化模型
+pip3 install onnxoptimizer
+python3 -m onnxoptimizer ./inswapper_128_fp16-slim.onnx ./inswapper_128_fp16-slim-opt.onnx
+
+
+产生有shape信心的模型
+
+
+./pnnx resnet18.pt inputshape=[1,3,224,224]
+./pnnx resnet18.onnx inputshape=[1,3,224,224]
+
+
+
+
+
+
+docker run -it -v ~/develop/temp:/temp  lmc/built-tools-redhat:1.0
