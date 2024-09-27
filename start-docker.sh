@@ -1,0 +1,1 @@
+docker run -it  -p 8081:8000 -v ~/develop/00_ai/swapface:/swapface -v ~/develop/test:/test -v ~/develop/test/insightface:/root/.insightface -v ~/develop/test/opennsfw2:/root/.opennsfw2 lmc/swapface-gpu:2.1 /bin/bash /swapface/start-flask.sh

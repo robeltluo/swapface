@@ -74,15 +74,13 @@ brew install make cmake gcc bzip2-devel libffi-devel zlib-devel tk-devel readlin
 
 二 执行
 
-ip=$(ifconfig en0 | grep inet | awk '$1=="inet" {print $2}')
-xhost + $ip
-docker run -it --rm --name displayContainer -e DISPLAY=$ip:0 -v /tmp/.X11-unix:/tmp/.X11-unix  lmc/swapface:1.2 bash /run.sh
+1 后台启动
+docker run -d -p 8081:8000  -v ~/develop/00_ai/swapface:/swapface -v ~/develop/test:/test -v ~/develop/test/insightface:/root/.insightface -v ~/develop/test/opennsfw2:/root/.opennsfw2 lmc/swapface:2.2 /bin/bash /swapface/start-flask.sh
 
-docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix  -v ~/develop/test:/test  lmc/swapface:1.2 bash /test/run.sh
+2 交互式启动
+docker run -it  -p 8081:8000 -v ~/develop/00_ai/swapface:/swapface -v ~/develop/test:/test -v ~/develop/test/insightface:/root/.insightface -v ~/develop/test/opennsfw2:/root/.opennsfw2 lmc/swapface:2.2 /bin/bash /swapface/start-flask.sh
 
-docker run -it  -v ~/develop/test:/test -v ~/develop/test/insightface:/root/.insightface lmc/swapface:1.2 sh -c "source ~/.bash_profile"
-
-docker run -it  -v ~/develop/00_ai/swapface:/swapface -v ~/develop/test:/test -v ~/develop/test/insightface:/root/.insightface -v ~/develop/test/opennsfw2:/root/.opennsfw2 lmc/swapface:2.0
+docker run -it  -p 8081:8000 -v ~/develop/00_ai/swapface:/swapface -v ~/develop/test:/test -v ~/develop/test/insightface:/root/.insightface -v ~/develop/test/opennsfw2:/root/.opennsfw2 lmc/swapface:2.2
 
 第一次执行，下载模型：
 rm -rf /test/temp/*; python /swapface/run.py  -s /test/fbb.jpg -t /test/ldh.jpeg -o /test
